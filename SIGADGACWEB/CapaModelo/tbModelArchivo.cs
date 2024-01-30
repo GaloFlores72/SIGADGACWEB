@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SistemaIntegradoGestion.Models
+namespace CapaModelo
 {
-    public class ModelArchivo
+   public class tbModelArchivo
     {
         public string NombreArchivo { get; set; }
         public string FechaModificacion { get; set; }

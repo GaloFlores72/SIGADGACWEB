@@ -45,8 +45,9 @@ namespace CapaDatos
             sb.Append(" ifnull(rtrim(ltrim(USUIDE)), '') as IdentificacionTributaria, ifnull(rtrim(ltrim(USUNUM)), '') as NumeroRuc, ifnull(rtrim(ltrim(USUUSU)), '') as UsuarioCreacion, ifnull(rtrim(ltrim(USUFEC)), '') as FechaCreacion,");
             sb.Append(" ifnull(rtrim(ltrim(USUHOR)), '') as HoraCreacion , ifnull(rtrim(ltrim(USUDIS)), '') as DispositivoCreacion, ifnull(rtrim(ltrim(USUUS1)), '') as UsuarioModificacion, ifnull(rtrim(ltrim(USUFE1)), '') as FechaModificacion,");
             sb.Append(" ifnull(rtrim(ltrim(USUHO1)), '') as HoraModificacion, ifnull(rtrim(ltrim(USUDI1)), '') as DispositivoModificacion, ifnull(rtrim(ltrim(USUCO1)), '') as CodigoSubsistema, ifnull(rtrim(ltrim(USUCO2)), '') as CodigoGestion,");
-            sb.Append(" ifnull(rtrim(ltrim(USUCO3)), '') as CodigoModulo, ifnull(rtrim(ltrim(USUCO4)), '') as CodigoRol, ifnull(rtrim(ltrim(USUCO5)), '') as CodigoCiudad, ifnull(rtrim(ltrim(USUCO6)), '') as CodigoDependencia, ifnull(rtrim(ltrim(SUBDES)), '') AS DescripcionSubSistema");
-            sb.Append(" FROM USUARC LEFT JOIN SUBAR2 ON (USUCO1 = SUBCOD) WHERE USUCOD = '" + codigoUsuario.ToUpper() + "'");
+            sb.Append(" ifnull(rtrim(ltrim(USUCO3)), '') as CodigoModulo, ifnull(rtrim(ltrim(USUCO4)), '') as CodigoRol, ifnull(rtrim(ltrim(USUCO9)), '') as CodigoCiudad, ifnull(rtrim(ltrim(USUCO6)), '') as CodigoDependencia, ifnull(rtrim(ltrim(SUBDES)), '') AS DescripcionSubSistema,");
+            sb.Append(" ifnull(rtrim(ltrim(USUNO1)), '') AS NOMBRECORTO, ifnull(rtrim(ltrim(USUCAR)), '') AS CARGO, ifnull(rtrim(ltrim(USUOID)), '') AS CentroContable");
+            sb.Append(" FROM USUARC LEFT JOIN SUBAR2 ON (USUCO1 = SUBCOD) LEFT JOIN USUAR1 ON(USUCO8 = USUCOD)  WHERE USUCOD = '" + codigoUsuario.ToUpper() + "'");
             query = sb.ToString();
             iDB2Command cmd;
             try
@@ -62,23 +63,23 @@ namespace CapaDatos
                     {
                         oUsuario = new tbUsuario();
                         oUsuario.CodigoUsuario = dr["CodigoUsuario"].ToString();
-                        oUsuario.NombresUsuario = dr["NombresUsuario"].ToString();
-                        oUsuario.ApellidosUsuario = dr["ApellidosUsuario"].ToString();
+                        oUsuario.NombreUsuario = dr["NombresUsuario"].ToString();
+                        oUsuario.ApellidoUsuario = dr["ApellidosUsuario"].ToString();
                         oUsuario.TipoIdentificacion = dr["TipoIdentificacion"].ToString();
-                        oUsuario.CedulaUsuario = dr["CedulaUsuario"].ToString();
-                        oUsuario.CorreoUsuario = dr["CorreoUsuario"].ToString();
-                        oUsuario.ClaveUsuario = dr["ClaveUsuario"].ToString();
+                        oUsuario.CedulaIdentificacion = dr["CedulaUsuario"].ToString();
+                        oUsuario.Correo = dr["CorreoUsuario"].ToString();
+                        oUsuario.Clave = dr["ClaveUsuario"].ToString();
                         oUsuario.EstadoActividad = dr["EstadoActividad"].ToString();
                         oUsuario.TipoAplicacion = dr["TipoAplicacion"].ToString();
                         oUsuario.IdentificacionTributaria = dr["IdentificacionTributaria"].ToString();
                         oUsuario.NumeroRuc = dr["NumeroRuc"].ToString();
-                        oUsuario.UsuarioCreacion = dr["UsuarioCreacion"].ToString();
-                        oUsuario.FechaCreacion = dr["FechaCreacion"].ToString();
-                        oUsuario.HoraCreacion = dr["HoraCreacion"].ToString();
+                        oUsuario.UsuarioCreado = dr["UsuarioCreacion"].ToString();
+                        oUsuario.FechaCreado = dr["FechaCreacion"].ToString();
+                        oUsuario.HoraCreado = dr["HoraCreacion"].ToString();
                         oUsuario.DispositivoCreacion = dr["DispositivoCreacion"].ToString();
-                        oUsuario.UsuarioModificacion = dr["UsuarioModificacion"].ToString();
-                        oUsuario.FechaModificacion = dr["FechaModificacion"].ToString();
-                        oUsuario.HoraModificacion = dr["HoraModificacion"].ToString();
+                        oUsuario.UsuarioModificado = dr["UsuarioModificacion"].ToString();
+                        oUsuario.FechaModificado = dr["FechaModificacion"].ToString();
+                        oUsuario.HoraModificado = dr["HoraModificacion"].ToString();
                         oUsuario.DispositivoModificacion = dr["DispositivoModificacion"].ToString();
                         oUsuario.CodigoSubsistema = dr["CodigoSubsistema"].ToString();
                         oUsuario.CodigoGestion = dr["CodigoGestion"].ToString();
@@ -87,6 +88,9 @@ namespace CapaDatos
                         oUsuario.CodigoCiudad = dr["CodigoCiudad"].ToString();
                         oUsuario.CodigoDependencia = dr["CodigoDependencia"].ToString();
                         oUsuario.DescripcionSubSistema = dr["DescripcionSubSistema"].ToString();
+                        oUsuario.NombreCorto = dr["NombreCorto"].ToString();
+                        oUsuario.Cargo = dr["Cargo"].ToString();
+                        oUsuario.CentroContable = dr["CentroContable"].ToString();
                         // oUsuario.oMenu = CD_Menu.Instancia.GetMenuPorCodigo(oUsuario.CodigoUsuario);
                     }
                     dr.Close();

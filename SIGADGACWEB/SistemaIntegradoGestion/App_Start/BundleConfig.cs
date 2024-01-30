@@ -38,6 +38,7 @@ namespace DGACWWEB
                        "~/Content/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css",
                       "~/Content/plugins/datatables-responsive/css/responsive.bootstrap4.min.css",
                       "~/Content/plugins/datatables-buttons/css/buttons.bootstrap4.min.css",
+                       "~/Content/plugins/ddatatables-fixedheader/css/fixedHeader.bootstrap4.css",
                       "~/Content/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css",
                       "~/Content/dist/css/adminlte.min.css"));
 
@@ -63,10 +64,11 @@ namespace DGACWWEB
                       "~/Content/plugins/datatables-responsive/js/responsive.bootstrap4.min.js",
                       "~/Content/plugins/datatables-buttons/js/dataTables.buttons.min.js",
                       "~/Content/plugins/datatables-buttons/js/buttons.bootstrap4.min.js",
+                      "~/Content/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.min.js",
                       "~/Content/plugins/bs-stepper/js/bs-stepper.min.js",
                       "~/Content/plugins/dropzone/min/dropzone.min.js",
                       "~/Content/dist/js/adminlte.min.js",
-                      "~/Content/dist/js/print.min.js",
+                      "~/Content/dist/js/print.min.js",                     
                       "~/Content/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js",
                       "~/Content/dist/js/dgac.js"
                      ));

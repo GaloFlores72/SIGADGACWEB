@@ -1,0 +1,536 @@
+﻿@model IEnumerable<CapaModelo.tbSolicitudVuelo>
+@{
+    ViewBag.Title = "OperacionesAprueba";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="card" style="font-size:12px">
+    <div class="card-header">
+        <table style="width:100%">
+            <tr>
+                <td class="text-center text-blue">
+                    <h6>DIRECCIÓN DE TRANSPORTE AÉREO</h6>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center text-blue">
+                    <h6>GESTIÓN INTERNA DE OPERACIONES</h6>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center text-blue">
+                    <h6>AUTORIZACIÓN DE LA SOLICITUD DE VUELOS CHARTER O ESPECIALES</h6>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <input type="hidden" id="pvista" name="pvista" value="@ViewBag.Vista" />
+        <table id="tbDetalleCharter" class="table table-bordered table-hover table-sm" style="width:100%; font-size:x-small">
+            <thead class="text-center">
+                <tr>
+                    <th>No. SOL.</th>
+                    <th>FECHA SOLICITUD</th>
+                    <th>FECHA APROBACION </th>
+                    <th>OPERACIÓN </th>
+                    <th>ESTADO SOLICITUD</th>
+                    <th>CIA. OPERADORA</th>
+                    <th>No PERMISO </th>
+                    <th>APROB. OPERACIONES</th>
+                    <th>APROB. FINANCIERO</th>
+                    <th>APROB. TRANSP. AEREO</th>
+                    <th>IMPRIMIR</th>
+                    <th>CONSULTAR</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.NumeroSolicitud)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.FechaEnvioSolicitud)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.FechaTransporteAereo)</td>
+                        <td class="text-justify">@Html.DisplayFor(modelItem => item.DescripcionTipoSolictud)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.EstadoSolicitud)</td>
+                        <td class="text-justify">@Html.DisplayFor(modelItem => item.NombreCompaniaAviacion)</td>
+                        <td>@Html.DisplayFor(modelItem => item.AutorizacionSolicitudVuelo)</td>
+                        <td>
+                            @if (item.EstadoOperacionesDSOP.Equals(""))
+                            {
+                                <a href='#' onclick='abrirPopUpForm(@item.NumeroSolicitud)'><b style='color:#ff0000'><img src='../Content/imganes/menos.png' style='width:20px;' /> <u> PENDIENTE</u></b></a>
+                            }
+                            else if (item.EstadoOperacionesDSOP.Equals("NE"))
+                            {
+                                <strong><img src='../Content/imganes/cancel.png' style='width:20px;' /> @item.DescripcionOperacionesDSOP </strong>
+                            }
+                            else if (item.EstadoOperacionesDSOP.Equals("AP"))
+                            {
+                                <strong><img src='../Content/imganes/check.png' style='width:20px;' /> @item.DescripcionOperacionesDSOP</strong>
+                            }
+                            else if (item.EstadoOperacionesDSOP.Equals(""))
+                            {
+                                <strong><img src='../Content/imganes/button-minus.png' style='width:20px;' /> PENDIENTE </strong>
+                            }
+
+
+                        </td>
+                        <td class="text-center">
+                            @if (item.EstadoFinanciero.Equals("AP"))
+                            {
+                                <strong><img src='../Content/imganes/check.png' style='width:20px;' /> @item.DescripcionEstadoFinanciero.Trim() </strong>
+                            }
+                            else if (item.EstadoFinanciero.Equals("NE"))
+                            {
+                                <strong><img src='../Content/imganes/cancel.png' style='width:20px;' /> @item.DescripcionEstadoFinanciero.Trim() </strong>
+                            }
+                            else if (item.EstadoFinanciero.Equals(""))
+                            {
+                                <strong><img src='../Content/imganes/button-minus.png' style='width:20px;' /> PENDIENTE </strong>
+                            }
+
+                        </td>
+                        <td class="text-center">
+                            @if (item.EstadoTransporteAereo.Equals("AP"))
+                            {
+                                <strong><img src='../Content/imganes/check.png' style='width:20px;' /> @item.DescripcionEstadoTransporteAereo.Trim() </strong>
+                            }
+                            else if (item.EstadoTransporteAereo.Equals("NE"))
+                            {
+                                <strong><img src='../Content/imganes/cancel.png' style='width:20px;' /> @item.DescripcionEstadoTransporteAereo</strong>
+                            }
+                            else if (item.EstadoTransporteAereo.Equals(""))
+                            {
+                                <strong><img src='../Content/imganes/button-minus.png' style='width:20px;' /> PENDIENTE </strong>
+                            }
+
+                        </td>
+                        <td class="text-center">
+                            @if (item.EstadoResponsableATO != "" && item.AutorizacionSolicitudVuelo.Trim().Length > 0)
+                            {
+                                <a id='imprimir' href='#' onclick='imprimir("@item.AutorizacionSolicitudVuelo")'><img src='../Content/imganes/printer.png' style='width:20px' /></a>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (item.FormaPago.Equals("C"))
+                            {
+                                <a id="consultar" href="@Url.Action("Consulta", "Charter",  new {id= item.NumeroSolicitud, vista=@ViewBag.Vista })"> <i class="ti-pencil-alt"> <img src="../Content/imganes/consultar-documento.png" style="width: 20px" /></i></a>
+                            }
+                            else
+                            {
+                                <a id="consultar" href="@Url.Action("SolicitudVuelo", "Charter",  new {id= item.NumeroSolicitud, vista=@ViewBag.Vista })"> <i class="ti-pencil-alt"> <img src="../Content/imganes/consultar-documento.png" style="width: 20px" /></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h6 class="modal-title text-white" id="modalLabel"></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="font-size:12px">
+                <div style="height:400px">
+                    <div class="container-fluid h-100 d-flex flex-column">
+                        <div class="row overflow-hidden">
+                            <div class="col-sm-12 h-100">
+                                <div class="card h-100">
+                                    <div class="card-body overflow-auto">
+                                        <input type="hidden" id="txtTipoSolicitud" />
+                                        <table style="width:100%; border-collapse: separate; border-spacing: 5px; background-color:#FCFBF5">
+                                            <tr>
+                                                <td class="col-sm-4 text-sm align-top">
+                                                    <small class="card-title text-muted"><u class="text-primary">TIPO DE SOLICITUD</u></small>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group clearfix">
+                                                        <div class="icheck-danger d-inline">
+                                                            <input type="radio" name="r2" disabled class="radSolicitud" checked id="radioTipoSolicitud1">
+                                                            <label for="radioTipoSolicitud1" class="lblTipoSolicitud"></label>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="nombreOperador" class="col-form-label">Número solicitud:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-4">
+                                                            <input type="text" class="form-control form-control-sm" id="numeroSolicitud" name="numeroSolicitud" readonly>
+                                                        </div>
+                                                        <label form="fechaSolicitud" class="col-sm-3 col-form-label">Fecha solicitud:</label>
+                                                        <div class="col-sm-5">
+                                                            <input type="text" class="form-control form-control-sm" id="fechaSolicitud" readonly>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @*1 INFORMACIÓN DEL EXPLOTADOR O SOLICITANTE*@
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">INFORMACIÓN DEL EXPLOTADOR O SOLICITANTE</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="nombreOperador" class="col-form-label">Nombre del explotador:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="nombreOperador" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="numeroRucOperador" class="col-form-label">Número Ruc:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="numeroRucOperador" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="telefonoOperador" class="col-form-label">Télefono:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="telefonoOperador" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="direccionOperador" class="col-form-label">Télefono:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="direccionOperador" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="emailOperador" class="col-form-label">Correo o email:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="emailOperador" readonly></td>
+                                            </tr>
+                                            @*1 INFORMACIÓN DEL LA AERONAVE*@
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">INFORMACIÓN DE LA AERONAVE</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="fechaVigenciaSeguro" class="col-form-label">Vigencia seguro:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm col-sm-4 text-right" id="fechaVigenciaSeguro" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="card h-100">
+                                                        <table id="tablaAeronaves" class="table table-bordered table-striped table-sm" style="width:100%">
+                                                            <thead>
+                                                                <tr class="text-center">
+                                                                    <th>Mátricula</th>
+                                                                    <th>Fabricante</th>
+                                                                    <th>Modelo</th>
+                                                                    <th>Mtow(kg)</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @*3 INFORMACIÓN DEL VUELO*@
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">INFORMACIÓN DEL VUELO</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="propositoVuelo" class="col-form-label">Proposito del vuelo:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm" id="propositoVuelo" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr class="divVueloItinerario" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="vueloItinerario" class="col-form-label">Vuelo itinerario:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm" id="vueloItinerario" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="especificarObjetoVuelo" class="col-form-label">Especificar objeto del vuelo y materia del transporte:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <div class="form-group clearfix">
+                                                        <div class="icheck-danger d-inline">
+                                                            <input type="radio" name="r3" disabled class="radPropositoVuelo" checked id="radioPropositoVuelo">
+                                                            <label for="radioPropositoVuelo" class="lblPropisitoVuelo"></label>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="numeroPasajeros" class="col-form-label">No. Pasajeros transportados:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm col-sm-5 text-right" id="numeroPasajeros" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="card h-100">
+                                                        <table id="tablaRutaVuelos" class="table table-bordered table-striped table-sm text-center" style="width:100%">
+                                                            <thead>
+                                                                <tr class="text-center">
+                                                                    <th>Ruta Vuelo</th>
+                                                                    <th>Derechos Solicitados</th>
+                                                                    <th>Fecha Ida Exacta(Sin periodos)</th>
+                                                                    <th>Fecha Vuelta</th>
+                                                                    <th>Hora Estimada de Vuelo</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @*3 INFORMACIÓN DEL FLETADOR*@
+                                            <tr class="divFletador" style="display: none">
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">INFORMACIÓN DEL FLETADOR</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="divFletador" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="nombreFletador" class="col-form-label">Nombre del Fletador:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="nombreFletador" readonly></td>
+                                            </tr>
+                                            <tr class="divFletador" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="telefonoFletador" class="col-form-label">Teléfono:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="telefonoFletador" readonly></td>
+                                            </tr>
+                                            <tr class="divFletador" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="direccionFletador" class="col-form-label">Dirección:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="direccionFletador" readonly></td>
+                                            </tr>
+                                            <tr class="divFletador" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="emailFletador" class="col-form-label">Correo o email:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="emailFletador" readonly></td>
+                                            </tr>
+                                            <tr class="divFletador" style="display: none">
+                                                <td class="col-sm-3">
+                                                    <label for="nombreRepresentanteFletador" class="col-form-label">Nombre del representante:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="nombreRepresentanteFletador" readonly></td>
+                                            </tr>
+                                            @*4 INFORMACIÓN DEL FACTURA*@
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">INFORMACIÓN DEL FACTURADOR</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="nombreCiaFactura" class="col-form-label">Compañia que factura:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="nombreCiaFactura" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="numeroRucFactura" class="col-form-label">Compañia que factura:</label>
+                                                </td>
+                                                <td class="col-sm-9"> <input type="text" class="form-control form-control-sm" id="numeroRucFactura" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="telefonoFletador" class="col-form-label">Teléfono:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="telefonoFactura" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="direccionFletador" class="col-form-label">Dirección:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="direccionFactura" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="emailFletador" class="col-form-label">Email:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="emailFactura" readonly></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="observacionFletador" class="col-form-label">Observación:</label>
+                                                </td>
+                                                <td class="col-sm-9">  <input type="text" class="form-control form-control-sm" id="observacionFactura" readonly></td>
+                                            </tr>
+                                            @*5 FORMA DE PAGO*@
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="col-sm-12 text-sm align-top">
+                                                        <small class="card-title text-muted"><u class="text-primary">FORMA DE PAGO</u></small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="numeroVuelos" class="col-form-label">No. vuelos:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm col-sm-4 text-right" id="numeroVuelos" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="totalPagar" class="col-form-label">Total a pagar:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm col-sm-4 text-right" id="totalPagar" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="formaPago" class="col-form-label">Forma pago:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm" id="formaPago" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="numeroComprobantePago" class="col-form-label">Comprobante pago Nro.:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm" id="numeroComprobantePago" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="fechaPago" class="col-form-label">Fecha pago.:</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="text" class="form-control form-control-sm" id="fechaPago" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-3">
+                                                    <label for="nombreComprobantePago" class="col-form-label">Comprobante pago(Derechos de trámite):</label>
+                                                </td>
+                                                <td class="col-sm-9">
+                                                    <input type="hidden" class="form-control form-control-sm" id="nombreComprobantePago" readonly>
+                                                    <p class="pcomprobante-pago"></p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="col-sm-12 text-sm align-top">
+                                <small class="card-title text-muted"><u class="text-primary">DOCUMENTOS ADJUNTOS</u></small>
+                            </div>
+                            <div class="card-body">
+                                <table style="width:100%; border-collapse: separate; border-spacing: 5px;">
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="card h-100">
+                                                <table id="tablaAdjuntos" class="table table-bordered table-striped table-sm" style="width:100%">
+                                                    <thead>
+                                                        <tr class="text-center">
+                                                            <th>Código</th>
+                                                            <th>Documento</th>
+                                                            <th>Adjunto</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="col-sm-12 text-sm align-top">
+                                <small class="card-title text-muted"><u class="text-primary">AUTORIZA LA SOLICITUD DE VUELOS CHARTER Y/O ESPECIAL</u></small>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="cboAprobacion" class="col-sm-3 col-form-label">Información Aprobación</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control custom-select " style="width:100%" id="cboAprobacion" name="cboAprobacion"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="Observacion" class="col-sm-3 col-form-label">Observación.</label>
+                                    <div class="col-sm-9">
+                                        <textarea cols="20" class="form-control" maxlength="100" id="Observacion" name="Observacion" rows="4"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal"><img src='~/Content/imganes/cancel.png' style='width:20px' />Cerrar </button>
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="Guardar()"><img src='~/Content/imganes/save.png' style='width:20px' /> Guardar </button>
+                                </div>
+                                <div id="loadImagen" style="display: none;">
+                                    <img src="~/Content/imganes/Loading.gif" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal load-->
+<div class="modal fade" id="modalload" tabindex="-1" role="dialog" aria-labelledby="loadMeLabel">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img src="~/Content/imganes/Loading.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="@Url.Content("~/Scripts/Views/operacionesAprueba.js")" type="text/javascript"></script>
+}
+

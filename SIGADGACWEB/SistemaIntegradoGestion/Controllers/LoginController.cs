@@ -50,8 +50,8 @@ namespace SistemaIntegradoGestion.Controllers
                             var oMenu = CD_Menu.Instancia.GetMenuPorCodigo(login.Usuario);
                             Session["Usuario"] = ousuario;
                             Session["MenuMaster"] = oMenu;
-                            Session["name"] = ousuario.NombresUsuario + " " + ousuario.ApellidosUsuario;
-                            Session["correo"] = ousuario.CorreoUsuario.Trim();
+                            Session["name"] = ousuario.NombreUsuario + " " + ousuario.ApellidoUsuario;
+                            Session["correo"] = ousuario.Correo.Trim();
                             return RedirectToAction("Index", "Home");
                         }
                         else
